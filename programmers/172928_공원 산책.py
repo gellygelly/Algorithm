@@ -1,14 +1,30 @@
-
-def move(op, n, x, y):
+def move(park, op, n, x, y):
+    pos_x, pos_y = x, y
     if op == 'N':
-        x -= n
+        for nx in range(x, x - n - 1, -1):
+            # 장애물 있는 칸 지나거나 맵 밖으로 벗어나면 초기값 반환
+            if nx < 0 or nx >= len(park) or park[nx][y] == 'X':
+                return x, y
+            pos_x = nx
     elif op == 'S':
-        x += n
+        for nx in range(x, x + n + 1, 1):
+            if nx < 0 or nx >= len(park) or park[nx][y] == 'X':
+                return x, y
+            pos_x = nx
+
     elif op == 'W':
-        y -= n
+        for ny in range(y, y - n - 1, -1):
+            if ny < 0 or ny >= len(park[1]) or park[x][ny] == 'X':
+                return x, y
+            pos_y = ny
     else:  # E
-        y += n
-    return x, y
+        for ny in range(y, y + n + 1, +1):
+            if ny < 0 or ny >= len(park[1]) or park[x][ny] == 'X':
+                return x, y
+            pos_y = ny
+
+    return pos_x, pos_y
+
 
 def solution(park, routes):
     answer = []
@@ -23,36 +39,15 @@ def solution(park, routes):
             break
 
     for route in routes:
-        op = route.split(' ')[0]
-        n = int(route.split(' ')[1])
-        pos_x, pos_y = move(op, n, x, y)
-
-        # 1. 공원을 벗어나지 않는 위치인지 확인
-        if pos_x >= 0 and pos_x < len(park) and pos_y >= 0 and pos_y < len(park[1]):
-            # 2. 지나가는 중간 경로에 장애물이 있는지 확인
-            diff_x = abs(pos_x - x)
-            diff_y = abs(pos_y - y)
-
-            check = False
-
-            if diff_x == 0:
-                for i in range(diff_y):
-                    if park[pos_x][i] == 'X':
-                        check = True
-                        break
-
-            if diff_y == 0:
-                for j in range(diff_x):
-                    if park[j][pos_y] == 'X':
-                        check = True
-                        break
-
-            if check == False:
-                x, y = pos_x, pos_y
+        op = route.split(' ')[0]  # 방향
+        n = int(route.split(' ')[1])  # 거리
+        print('이동 전: ', x, y)
+        x, y = move(park, op, n, x, y)
+        print('이동 후: ', x, y)
 
     answer = [x, y]
 
     return answer
 
-answer = solution( ["OXO", "XSX", "OXO"], ["S 1", "E 1", "W 1", "N 1"]) # 기댓값 [1, 1]
+answer = solution(["OSO","OOO","OXO","OOO"], ["E 2","S 3","W 1"])
 print('output:', answer)
