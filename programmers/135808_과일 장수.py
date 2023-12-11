@@ -13,3 +13,4 @@ def solution(k, m, score):
         start -= m
 
     return maxPrice
+
