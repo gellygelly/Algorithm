@@ -1,31 +1,27 @@
 from collections import deque
 
-global graph
-dx = [-1, 1, 0, 0]
-dy = [0, 0, -1, 1]
 
-def bfs(x,y):
-    queue = deque()
-    queue.append((x,y))
+def bfs(skills, i, visited):
+    queue = deque([i])
+    visited[i] = 1
 
     while queue:
-        x, y = queue.popleft()
-        for i in range(4):
-            nx = x + dx[i]
-            ny = y+ dy[i]
-            if nx<0 or ny <0 or nx >= N or ny>=N:
-                continue
+        v = queue.popleft()
 
+        for i in range(len(skills)):
+            if skills[i][0] + 1 == i:
+                if visited[skills[i][1] - 1] == 0:
+                    queue.append(i)
+                    visited[skills[i][1] - 1] = 1
+                    visited[skills[i][0] - 1] += visited[skills[i][1] - 1]
 
-if __name__=='__main__':
-    N, M = map(int, input('정수 N, M 입력:').split())
+def solution(total_sp, skills):
+    visited = [0] * len(skills)
 
-    graph = []
-    for i in range(N):
-        graph.append(list(map(int, input('M개의 정수 입력:'))))
+    bfs(skills, 0, visited)
 
-    print(graph)
+    print(visited)
 
-    bfs(0, 0)
+    return visited
 
-
+output = solution(121, [[1,2],[1,3], [3,6], [3,4], [3,5]])
